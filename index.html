@@ -19,7 +19,7 @@
             position: absolute;
             cursor: pointer;
             width: 5vw;
-            transition: transform 5s ease; /* Shorter transition duration for smoother movement */
+            transition: transform 6s ease;
         }
     </style>
 </head>
@@ -28,45 +28,50 @@
     <img id="logo" src="./assets/logo.png" alt="Logo">
 
     <script>
-        const logo = document.getElementById('logo');
-        const logoWidth = logo.offsetWidth;
-        const logoHeight = logo.offsetHeight;
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
+        document.addEventListener('DOMContentLoaded', function () {
+            const logo = document.getElementById('logo');
+            const logoWidth = logo.offsetWidth;
+            const logoHeight = logo.offsetHeight;
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            let prevClickX = 0; // Variable to store the previous clickX value
 
-        // Function to move the logo towards cursor with smooth medium speed
-        function moveLogo(event) {
-            const cursorX = event.pageX;
-            const cursorY = event.pageY;
-            const logoX = logo.offsetLeft;
-            const logoY = logo.offsetTop;
+            // Function to move the logo towards click position with smooth medium speed
+            function moveLogo(event) {
+                const clickX = event.clientX;
+                const clickY = event.clientY;
+                const logoX = logo.offsetLeft;
+                const logoY = logo.offsetTop;
 
-            // Check if the click occurred on the right side of the logo
-            const clickedOnRightSide = cursorX > logoX + logoWidth / 2;
+                // Check if the click is on the right side of the logo
+                const clickedOnRightSide = prevClickX < clickX;
 
-            // Flip the logo horizontally if clicked on the right side, otherwise flip it to the left
-            const flipDirection = clickedOnRightSide ? 'scaleX(-1)' : '';
+                // Flip the logo horizontally if clicked on the right side, otherwise flip it to the left
+                const flipDirection = clickedOnRightSide ? 'scaleX(-1)' : 'scaleX(1)';
 
-            const steps = 10; // Number of steps for smoother movement
+                const steps = 10; // Number of steps for smoother movement
 
-            // Calculate step sizes
-            const stepX = (cursorX - (logoX + logoWidth / 2)) / steps;
-            const stepY = (cursorY - (logoY + logoHeight / 2)) / steps;
+                // Calculate step sizes
+                const stepX = (clickX - (logoX + logoWidth / 2)) / steps;
+                const stepY = (clickY - (logoY + logoHeight / 2)) / steps;
 
-            // Smoothly update logo position
-            let newX = logoX + (stepX * steps);
-            let newY = logoY + (stepY * steps);
+                // Smoothly update logo position
+                let newX = logoX + (stepX * steps);
+                let newY = logoY + (stepY * steps);
 
-            // Ensure logo remains within the screen boundaries
-            newX = Math.max(0, Math.min(screenWidth - logoWidth, newX));
-            newY = Math.max(0, Math.min(screenHeight - logoHeight, newY));
+                // Ensure logo remains within the screen boundaries
+                newX = Math.max(0, Math.min(screenWidth - logoWidth, newX));
+                newY = Math.max(0, Math.min(screenHeight - logoHeight, newY));
 
-            // Set the initial logo position with the flip
-            logo.style.transform = `translate(${newX}px, ${newY}px) ${flipDirection}`;
-        }
+                // Set the new logo position with the flip
+                logo.style.transform = `translate(${newX}px, ${newY}px) ${flipDirection}`;
 
-        // Add click event listener to move logo towards cursor
-        document.addEventListener('click', moveLogo);
+                prevClickX = clickX; // Update prevClickX with current clickX value
+            }
+
+            // Add click event listener to move logo towards click position
+            document.addEventListener('click', moveLogo);
+        });
     </script>
 </body>
 
